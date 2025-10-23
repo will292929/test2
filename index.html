@@ -12,20 +12,25 @@
   <meta property="og:description" content="Web, apps, media, and automation—built fast, beautiful, and affordable." />
   <meta property="og:type" content="website" />
 
-  <!-- Fonts (Inter variable) -->
+  <!-- Fonts (Inter for body, Cinzel for ornate headings) -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
 
   <!-- Styles -->
   <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
+  <!-- Decorative background SVG (non-interactive) -->
+  <svg class="page-ornament" aria-hidden="true" width="0" height="0" viewBox="0 0 0 0" focusable="false" style="position:absolute;pointer-events:none;">
+    <!-- kept for potential programmatic use; main ornaments are CSS-based -->
+  </svg>
+
   <!-- Header -->
   <header class="site-header" role="banner">
     <div class="container header-flex">
-      <h1 class="logo">Your Business Name</h1>
-      <nav aria-label="Primary">
+      <h1 class="logo"><span class="logo-decor">Your</span> Business Name</h1>
+      <nav aria-label="Primary" class="primary-nav">
         <a href="index.html" class="active">Home</a>
         <a href="about.html">About Us</a>
         <a href="products.html">Products</a>
@@ -35,27 +40,53 @@
 
   <!-- Hero Section -->
   <section class="hero-section" aria-labelledby="hero-heading">
-    <div class="container">
-      <h2 id="hero-heading">Launch Bold Ideas</h2>
-      <p>We help scrappy founders and daring creatives build websites, apps, and media experiences that stand out.</p>
-      <a href="products.html" class="btn-primary">Explore Our Work</a>
+    <div class="container hero-grid">
+      <div class="hero-text">
+        <h2 id="hero-heading" class="ornate">Launch Bold Ideas</h2>
+        <p class="lead">We help scrappy founders and daring creatives build websites, apps, and media experiences that stand out — crafted with intention, speed, and style.</p>
+        <div class="hero-cta">
+          <a href="products.html" class="btn-primary">Explore Our Work</a>
+          <a href="about.html" class="btn-outline">Start a Conversation</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <!-- Ornamental SVG accent -->
+        <svg viewBox="0 0 600 360" preserveAspectRatio="xMidYMid slice" class="hero-svg">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0%" stop-color="#ff7a1a" stop-opacity="0.95"/>
+              <stop offset="100%" stop-color="#000000" stop-opacity="0.9"/>
+            </linearGradient>
+            <filter id="blur"><feGaussianBlur stdDeviation="12" /></filter>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#g1)"/>
+          <g opacity="0.25" filter="url(#blur)">
+            <path d="M40 300 Q150 20 320 260 T560 150 L560 360 L0 360 Z" fill="#000" />
+          </g>
+        </svg>
+        <img src="https://via.placeholder.com/500x300/ff7a1a/000000?text=Creative+Workspace" alt="Creative workspace" style="width: 100%; border-radius: 8px; display:block;">
+      </div>
     </div>
   </section>
 
   <!-- Introduction -->
   <section class="intro-section" aria-labelledby="intro-heading">
     <div class="container two-column">
-      <div>
+      <div class="intro-copy">
         <h3 id="intro-heading">We’re not just another agency.</h3>
-        <p>We're your tech partner, creative studio, and strategy team — all rolled into one. Whether you're launching a product, showcasing your service, or building your brand, we can help you make it happen — fast and affordably.</p>
-        <ul>
+        <p>We're your tech partner, creative studio, and strategy team — all rolled into one. Whether you're launching a product, showcasing your service, or building your brand, we help you craft work that's memorable, strategic, and built to perform. Our approach is hands-on, fast, and tailored.</p>
+        <ul class="checklist">
           <li>✅ Custom websites and tools</li>
           <li>✅ Automation and backend help</li>
           <li>✅ Editing for music, video, or campaigns</li>
         </ul>
       </div>
-      <div>
-        <img src="https://via.placeholder.com/500x300" alt="Creative workspace" style="width: 100%; border-radius: 8px;">
+      <div class="intro-visual">
+        <div class="ornament-frame">
+          <img src="https://via.placeholder.com/500x300/000000/ff7a1a?text=Studio" alt="Creative workspace" style="width:100%;border-radius:6px;">
+          <div class="frame-corner top-left"></div>
+          <div class="frame-corner bottom-right"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -63,7 +94,7 @@
   <!-- Features -->
   <section class="features-section" aria-labelledby="features-heading">
     <div class="container">
-      <h2 id="features-heading">What We Do</h2>
+      <h2 id="features-heading" class="section-title ornate">What We Do</h2>
       <div class="grid">
         <article class="card">
           <h3>Website Development</h3>
@@ -84,22 +115,24 @@
   <!-- Testimonials -->
   <section class="testimonials-section" aria-labelledby="testimonials-heading">
     <div class="container">
-      <h2 id="testimonials-heading">What Our Clients Say</h2>
-      <blockquote class="testimonial">
-        <p>"They built us a website in under a week that looked better than anything we'd seen from $10k agencies. Amazing team!"</p>
-        <p class="client-name">— Jamie R., Startup Founder</p>
-      </blockquote>
-      <blockquote class="testimonial">
-        <p>"The video editing and website bundle they offered was perfect for our church. It looks professional and was super affordable."</p>
-        <p class="client-name">— Mark W., Youth Director</p>
-      </blockquote>
+      <h2 id="testimonials-heading" class="section-title">What Our Clients Say</h2>
+      <div class="testimonials-grid">
+        <blockquote class="testimonial">
+          <p>"They built us a website in under a week that looked better than anything we'd seen from $10k agencies. Amazing team!"</p>
+          <p class="client-name">— Jamie R., Startup Founder</p>
+        </blockquote>
+        <blockquote class="testimonial">
+          <p>"The video editing and website bundle they offered was perfect for our church. It looks professional and was super affordable."</p>
+          <p class="client-name">— Mark W., Youth Director</p>
+        </blockquote>
+      </div>
     </div>
   </section>
 
   <!-- Call to Action -->
   <section class="cta-section" aria-labelledby="cta-heading">
-    <div class="container">
-      <h2 id="cta-heading">Let’s Build Something Together</h2>
+    <div class="container cta-wrap">
+      <h2 id="cta-heading" class="ornate">Let’s Build Something Together</h2>
       <p>Contact us to start your next project — no commitment, no pressure.</p>
       <a href="about.html" class="btn-secondary">Learn About Us</a>
     </div>
@@ -107,9 +140,15 @@
 
   <!-- Footer -->
   <footer class="site-footer" role="contentinfo">
-    <div class="container">
-      <p>&copy; 2025 Your Business Name. All rights reserved.</p>
-      <small>Built with ❤️ by will292929</small>
+    <div class="container footer-grid">
+      <div>
+        <p>&copy; 2025 Your Business Name. All rights reserved.</p>
+        <small>Built with ❤️ by will292929</small>
+      </div>
+      <div class="social">
+        <a href="#" aria-label="Twitter" class="social-pill">Twitter</a>
+        <a href="#" aria-label="Dribbble" class="social-pill">Dribbble</a>
+      </div>
     </div>
   </footer>
 </body>

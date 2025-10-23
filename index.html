@@ -2,17 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="description" content="Your Business Name – a scrappy and strategic studio for web, apps, video, and tech."/>
   <title>Home | Your Business Name</title>
+
+  <!-- Brand polish -->
+  <meta name="theme-color" content="#ff7a1a" />
+  <meta property="og:title" content="Your Business Name" />
+  <meta property="og:description" content="Web, apps, media, and automation—built fast, beautiful, and affordable." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts (Inter variable) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
   <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
   <!-- Header -->
-  <header class="site-header">
+  <header class="site-header" role="banner">
     <div class="container header-flex">
       <h1 class="logo">Your Business Name</h1>
-      <nav>
+      <nav aria-label="Primary">
         <a href="index.html" class="active">Home</a>
         <a href="about.html">About Us</a>
         <a href="products.html">Products</a>
@@ -21,19 +34,19 @@
   </header>
 
   <!-- Hero Section -->
-  <section class="hero-section">
+  <section class="hero-section" aria-labelledby="hero-heading">
     <div class="container">
-      <h2>Launch Bold Ideas</h2>
+      <h2 id="hero-heading">Launch Bold Ideas</h2>
       <p>We help scrappy founders and daring creatives build websites, apps, and media experiences that stand out.</p>
       <a href="products.html" class="btn-primary">Explore Our Work</a>
     </div>
   </section>
 
   <!-- Introduction -->
-  <section class="intro-section">
+  <section class="intro-section" aria-labelledby="intro-heading">
     <div class="container two-column">
       <div>
-        <h3>We’re not just another agency.</h3>
+        <h3 id="intro-heading">We’re not just another agency.</h3>
         <p>We're your tech partner, creative studio, and strategy team — all rolled into one. Whether you're launching a product, showcasing your service, or building your brand, we can help you make it happen — fast and affordably.</p>
         <ul>
           <li>✅ Custom websites and tools</li>
@@ -48,52 +61,52 @@
   </section>
 
   <!-- Features -->
-  <section class="features-section">
+  <section class="features-section" aria-labelledby="features-heading">
     <div class="container">
-      <h2>What We Do</h2>
+      <h2 id="features-heading">What We Do</h2>
       <div class="grid">
-        <div class="card">
+        <article class="card">
           <h3>Website Development</h3>
           <p>We build fast, custom-coded, beautiful websites that load quickly and convert visitors.</p>
-        </div>
-        <div class="card">
-          <h3>App & Tool Building</h3>
+        </article>
+        <article class="card">
+          <h3>App &amp; Tool Building</h3>
           <p>We create tools for mobile and desktop — whether you're automating or launching an MVP.</p>
-        </div>
-        <div class="card">
-          <h3>Media & Editing</h3>
+        </article>
+        <article class="card">
+          <h3>Media &amp; Editing</h3>
           <p>Music, video, ads — we help you build content that makes your business pop.</p>
-        </div>
+        </article>
       </div>
     </div>
   </section>
 
   <!-- Testimonials -->
-  <section class="testimonials-section">
+  <section class="testimonials-section" aria-labelledby="testimonials-heading">
     <div class="container">
-      <h2>What Our Clients Say</h2>
-      <div class="testimonial">
+      <h2 id="testimonials-heading">What Our Clients Say</h2>
+      <blockquote class="testimonial">
         <p>"They built us a website in under a week that looked better than anything we'd seen from $10k agencies. Amazing team!"</p>
         <p class="client-name">— Jamie R., Startup Founder</p>
-      </div>
-      <div class="testimonial">
+      </blockquote>
+      <blockquote class="testimonial">
         <p>"The video editing and website bundle they offered was perfect for our church. It looks professional and was super affordable."</p>
         <p class="client-name">— Mark W., Youth Director</p>
-      </div>
+      </blockquote>
     </div>
   </section>
 
   <!-- Call to Action -->
-  <section class="cta-section">
+  <section class="cta-section" aria-labelledby="cta-heading">
     <div class="container">
-      <h2>Let’s Build Something Together</h2>
+      <h2 id="cta-heading">Let’s Build Something Together</h2>
       <p>Contact us to start your next project — no commitment, no pressure.</p>
       <a href="about.html" class="btn-secondary">Learn About Us</a>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="site-footer">
+  <footer class="site-footer" role="contentinfo">
     <div class="container">
       <p>&copy; 2025 Your Business Name. All rights reserved.</p>
       <small>Built with ❤️ by will292929</small>

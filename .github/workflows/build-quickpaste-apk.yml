@@ -1,0 +1,39 @@
+name: Build QuickPaste APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ quickpaste-apk-build ]
+    paths:
+      - 'quickpaste/**'
+      - '.github/workflows/build-quickpaste-apk.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Decode source
+        run: |
+          base64 --decode quickpaste/QuickPasteNative_Source.zip.b64 > quickpaste-source.zip
+          unzip -q quickpaste-source.zip
+      - name: Install Android SDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Build APK
+        working-directory: QuickPasteNative
+        run: gradle assembleDebug
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: QuickPaste-debug-apk
+          path: QuickPasteNative/app/build/outputs/apk/debug/app-debug.apk

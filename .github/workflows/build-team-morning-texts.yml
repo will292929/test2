@@ -1,0 +1,101 @@
+name: Build Team Morning Texts APK
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: team-morning-texts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-smoke-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.1.0'
+      - name: Unit tests
+        run: gradle --no-daemon testDebugUnitTest
+      - name: Build debug APK
+        run: gradle --no-daemon assembleDebug
+      - name: Rename APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk TeamMorningTexts-v1.2.apk
+      - name: Preserve compiled APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: TeamMorningTexts-APK-v1.2
+          path: TeamMorningTexts-v1.2.apk
+          if-no-files-found: error
+      - name: Emulator launch and preview smoke test
+        timeout-minutes: 12
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          script: |
+            trap 'adb logcat -d > emulator-logcat.txt || true; adb shell uiautomator dump /sdcard/window-failure.xml || true; adb pull /sdcard/window-failure.xml window-failure.xml || true' ERR
+            adb install -r TeamMorningTexts-v1.2.apk
+            adb shell am start -W -n com.austinstrat.teamtexts/.SettingsActivity
+            sleep 3
+            adb shell uiautomator dump /sdcard/window.xml
+            adb pull /sdcard/window.xml window-before.xml
+            grep -q 'Message Settings' window-before.xml
+            for attempt in 1 2 3 4 5 6 7 8; do
+              if grep -q 'preview_button' window-before.xml; then break; fi
+              adb shell input swipe 500 1500 500 400 350
+              sleep 1
+              adb shell uiautomator dump /sdcard/window.xml
+              adb pull /sdcard/window.xml window-before.xml
+            done
+            grep -q 'preview_button' window-before.xml
+            python3 - <<'PY' > tap.txt
+            import re
+            text=open('window-before.xml', encoding='utf-8').read()
+            m=re.search(r'content-desc="preview_button"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', text)
+            if not m:
+                m=re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"[^>]*content-desc="preview_button"', text)
+            if not m:
+                raise SystemExit('preview button not found')
+            x1,y1,x2,y2=map(int,m.groups())
+            print((x1+x2)//2, (y1+y2)//2)
+            PY
+            read X Y < tap.txt
+            adb shell input tap "$X" "$Y"
+            sleep 3
+            adb shell uiautomator dump /sdcard/window.xml
+            adb pull /sdcard/window.xml window-after.xml
+            grep -q 'Alex' window-after.xml
+            adb shell dumpsys activity activities | grep -q 'com.austinstrat.teamtexts/.SettingsActivity'
+            adb logcat -d > emulator-logcat.txt
+            if grep -A8 -B2 'FATAL EXCEPTION' emulator-logcat.txt | grep -q 'com.austinstrat.teamtexts'; then
+              cat emulator-logcat.txt
+              exit 1
+            fi
+      - name: Preserve emulator diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TeamMorningTexts-emulator-diagnostics
+          path: |
+            window-before.xml
+            window-after.xml
+            window-failure.xml
+            emulator-logcat.txt
+            tap.txt
+          if-no-files-found: ignore

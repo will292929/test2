@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-smoke-test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,18 +20,62 @@ jobs:
       - name: Install Android SDK
         run: |
           yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.1.0'
-      - name: Apply v1.1 fixes
-        run: python3 .github/scripts/apply_v11_fixes.py
+      - name: Unit tests
+        run: gradle --no-daemon testDebugUnitTest
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk TeamMorningTexts.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk TeamMorningTexts-v1.2.apk
+      - name: Emulator launch and preview smoke test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: |
+            adb install -r TeamMorningTexts-v1.2.apk
+            adb shell am start -W -n com.austinstrat.teamtexts/.SettingsActivity
+            sleep 3
+            adb shell uiautomator dump /sdcard/window.xml
+            adb pull /sdcard/window.xml window-before.xml
+            grep -q 'Message Settings' window-before.xml
+            for attempt in 1 2 3 4 5 6; do
+              if grep -q 'preview_button' window-before.xml; then break; fi
+              adb shell input swipe 500 1500 500 450 350
+              sleep 1
+              adb shell uiautomator dump /sdcard/window.xml
+              adb pull /sdcard/window.xml window-before.xml
+            done
+            grep -q 'preview_button' window-before.xml
+            python3 - <<'PY' > tap.txt
+            import re
+            text=open('window-before.xml', encoding='utf-8').read()
+            m=re.search(r'content-desc="preview_button"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', text)
+            if not m:
+                m=re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"[^>]*content-desc="preview_button"', text)
+            if not m:
+                raise SystemExit('preview button not found')
+            x1,y1,x2,y2=map(int,m.groups())
+            print((x1+x2)//2, (y1+y2)//2)
+            PY
+            read X Y < tap.txt
+            adb shell input tap "$X" "$Y"
+            sleep 3
+            adb shell uiautomator dump /sdcard/window.xml
+            adb pull /sdcard/window.xml window-after.xml
+            grep -q 'Alex' window-after.xml
+            adb shell pidof com.austinstrat.teamtexts
+            if adb logcat -d | grep -A8 -B2 'FATAL EXCEPTION' | grep -q 'com.austinstrat.teamtexts'; then
+              adb logcat -d
+              exit 1
+            fi
       - uses: actions/upload-artifact@v4
         with:
-          name: TeamMorningTexts-APK-v1.1
-          path: TeamMorningTexts.apk
+          name: TeamMorningTexts-APK-v1.2
+          path: TeamMorningTexts-v1.2.apk
           if-no-files-found: error
